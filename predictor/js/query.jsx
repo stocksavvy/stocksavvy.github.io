@@ -64,7 +64,7 @@ export default function Query() {
           <ShowChartIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Stock Predictor
+          StockSavvy
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
@@ -73,7 +73,7 @@ export default function Query() {
             required
             fullWidth
             id="stock"
-            label="Stock Symbol"
+            label="NASDAQ Stock Symbol"
             name="stock"
             autoComplete="off"
             autoFocus
