@@ -18,7 +18,7 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
+      <Link color="inherit" href="https://sdogra.github.io/">
         Sahil Dogra
       </Link>{' '}
       {new Date().getFullYear()}
@@ -75,7 +75,7 @@ export default function Query() {
             id="stock"
             label="Stock Symbol"
             name="stock"
-            autoComplete="email"
+            autoComplete="off"
             autoFocus
           />
           <Button

@@ -1,0 +1,10 @@
+@import url(https://fonts.googleapis.com/css?family=Anton&display=swap);
+
+h1, p {
+    font-family: Lato;
+}
+
+.main {
+    background-color: rgb(238, 238, 238, 0.625);
+    border-radius: 10px;
+}
