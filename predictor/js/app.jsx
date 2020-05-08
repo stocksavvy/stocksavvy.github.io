@@ -3,7 +3,7 @@ import Query from './query';
 import ParticlesBg from 'particles-bg';
 
 
-class App extends Component {
+class App extends React.Component {
     constructor() {
       super();
       this.state = {
