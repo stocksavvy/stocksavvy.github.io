@@ -66,7 +66,7 @@ export default function Query() {
         <Typography component="h1" variant="h5">
           StockSavvy
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate method='get' action="/stock">
           <TextField
             variant="outlined"
             margin="normal"
