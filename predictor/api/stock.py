@@ -20,7 +20,7 @@ def get_stock():
     stock = flask.request.args.get('stock')
     alphavantage_key = '15H46IQZLXKESHV4'
     now = datetime.datetime.now()
-    start = datetime.datetime(2015, 1, 1)
+    start = datetime.datetime(2019, 1, 1)
     end = datetime.datetime(now.year, now.month, now.day)
 
     # Use Pandas DataReader to read in historical stock data
@@ -34,6 +34,7 @@ def get_stock():
     axis.set_ylabel("Closing Price")
     axis.grid() 
     axis.plot(df.index, df.close)
+    
 
     # Convert Plot to PNG Image
     pngImage = io.BytesIO()
@@ -43,8 +44,6 @@ def get_stock():
     # pngImagesB64String = "data:image/png;base64,"
     # pngImagesB64String += base64.b64encode(pngImage.getvalue().decode('utf8'))
 
-
-    print(df.head(), file=sys.stderr)
     context = {"stock" : stock,
                "image" : pngImage}
     return flask.render_template("stock.html", **context)
