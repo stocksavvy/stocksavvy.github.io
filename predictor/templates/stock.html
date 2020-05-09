@@ -6,8 +6,8 @@
 
 <body>
     <div id="test">
-        <p>Predictions for {{stock}} Stock</p>
-        <img src="{{ image }}"/>
+        <!-- <p>Predictions for {{stock}} Stock</p> -->
+        <img src="/{{ stock }}-plot.png"/>
     </div>
       <!-- Load JavaScript -->
       <script type="text/javascript" src="{{ url_for('static', filename='js/bundle.js') }}"></script>

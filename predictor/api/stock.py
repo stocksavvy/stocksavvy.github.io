@@ -10,14 +10,20 @@ import datetime
 import pandas as pd
 import pandas_datareader.data as web
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 
 @predictor.app.route('/stock', methods=['GET'])
 def get_stock():
     """Return stock information view API to be rendered by template"""
-    # Store variables 
+    # Store stock variable
     stock = flask.request.args.get('stock')
+    context = {"stock" : stock}
+
+    return flask.render_template("stock.html", **context)
+
+@predictor.app.route('/<stock>-plot.png')
+def get_graph(stock):
     alphavantage_key = '15H46IQZLXKESHV4'
     now = datetime.datetime.now()
     start = datetime.datetime(2019, 1, 1)
@@ -27,23 +33,23 @@ def get_stock():
     df = web.DataReader(stock, "av-daily", start, end, api_key=alphavantage_key)
 
     # Generate Plot
-    fig = Figure()
-    axis = fig.add_subplot(1, 1, 1)
-    axis.set_title("Price Predictions for " + stock + " Stock")
-    axis.set_xlabel("Date")
-    axis.set_ylabel("Closing Price")
-    axis.grid() 
-    axis.plot(df.index, df.close)
+    fig, ax = plt.subplots()
+    ax.set_title("Price Predictions for " + stock + " Stock")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Closing Price")
+    ax.plot(df.index, df.close)
+    
+    # Find at most 5 ticks on the y-axis at 'nice' locations
+    max_xticks = 5
+    xloc = plt.MaxNLocator(max_xticks)
+    ax.xaxis.set_major_locator(xloc)
+    
+    # for n, label in enumerate(ax.xaxis.get_ticklabels()):
+    #     if n % 1000 != 0:
+    #         label.set_visible(False)
     
 
     # Convert Plot to PNG Image
     pngImage = io.BytesIO()
     FigureCanvas(fig).print_png(pngImage)
     return Response(pngImage.getvalue(), mimetype='image/png')
-    # Encode PNG image to base64 string
-    # pngImagesB64String = "data:image/png;base64,"
-    # pngImagesB64String += base64.b64encode(pngImage.getvalue().decode('utf8'))
-
-    context = {"stock" : stock,
-               "image" : pngImage}
-    return flask.render_template("stock.html", **context)
