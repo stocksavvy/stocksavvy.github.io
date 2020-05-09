@@ -24,6 +24,7 @@ def get_stock():
 
 @predictor.app.route('/<stock>-plot.png')
 def get_graph(stock):
+    # Define variables for data to be read
     alphavantage_key = '15H46IQZLXKESHV4'
     now = datetime.datetime.now()
     start = datetime.datetime(2019, 1, 1)
@@ -43,11 +44,6 @@ def get_graph(stock):
     max_xticks = 5
     xloc = plt.MaxNLocator(max_xticks)
     ax.xaxis.set_major_locator(xloc)
-    
-    # for n, label in enumerate(ax.xaxis.get_ticklabels()):
-    #     if n % 1000 != 0:
-    #         label.set_visible(False)
-    
 
     # Convert Plot to PNG Image
     pngImage = io.BytesIO()
