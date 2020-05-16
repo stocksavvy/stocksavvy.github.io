@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+</head>
+
+<title>Sahil's Stock Predictor</title>
+
+<body>
+    
+    <div id = "sorryText"> 
+        <h1>We are sorry, but your query for the {{ stock }} stock could not be processed.</h1>
+        <p> Some potential reasons for this are ... </p>
+        <p> - The ticker you entered was spelled incorrectly.</p>
+        <p> - The stock is not currently supported by the API we reference to collect our data.</p>
+        <p> - Certain data is not available for your selected stock, and we cannot generate predictions.</p>
+
+        <h1> Thank you for your patience!</h1>
+        <a href="/"><p> Click to go to the home page</p></a>
+    </div>
+
+   
+
+      <!-- Load JavaScript -->
+      <script type="text/javascript" src="{{ url_for('static', filename='js/bundle.js') }}"></script>
+
+</body>
+
+</html>
+
+<script>
+    $( "#stock-img").on("load", function(){
+        $("#loading-image").css("display", "none")
+        $("#disclaimer").css("display", "block")
+    })
+</script>

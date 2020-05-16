@@ -80,10 +80,10 @@ def get_graph(stock):
     model.compile(optimizer="adam", loss="mean_squared_error")
 
     # Fit model to training data and predict on the test data
-    model.fit(x_train, y_train, epochs=50, batch_size=10)
+    model.fit(x_train, y_train, epochs=50)
     
     predictions = []
-    for prediction in model.predict(x_test, batch_size=10):
+    for prediction in model.predict(x_test):
         predictions.append(prediction[0])
     predictions = scaler.inverse_transform(np.array(predictions).reshape(-1,1))
     start_index = len(df.index) - len(predictions)
