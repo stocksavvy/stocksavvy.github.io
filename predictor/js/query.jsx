@@ -73,7 +73,7 @@ export default function Query() {
             required
             fullWidth
             id="stock"
-            label="NASDAQ Stock Symbol"
+            label="NASDAQ Stock Symbol (i.e. FB, AMZN, etc.)"
             name="stock"
             autoComplete="off"
             autoFocus
