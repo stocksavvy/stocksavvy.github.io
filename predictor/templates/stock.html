@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<head>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
 
 <title>Sahil's Stock Predictor</title>
 
 <body>
+    
+    <img id="loading-image" src="../static/imgs/loader.gif" alt="Loading..." />
+    
+
     <div id="test">
         <!-- <p>Predictions for {{stock}} Stock</p> -->
-        <img src="/{{ stock }}-plot.png"/>
+        <img id = "stock-img" src="/{{ stock }}-plot.png"/>
     </div>
       <!-- Load JavaScript -->
       <script type="text/javascript" src="{{ url_for('static', filename='js/bundle.js') }}"></script>
@@ -15,3 +22,9 @@
 </body>
 
 </html>
+
+<script>
+    $( "#stock-img").on("load", function(){
+        $("#loading-image").css("display", "none")
+    })
+</script>

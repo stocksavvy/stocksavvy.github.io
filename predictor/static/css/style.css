@@ -1,5 +1,9 @@
 @import url(https://fonts.googleapis.com/css?family=Anton&display=swap);
 
+body, html {
+    height: 100%;
+}
+
 h1, p {
     font-family: Lato;
 }
@@ -8,3 +12,19 @@ h1, p {
     background-color: rgb(238, 238, 238, 0.625);
     border-radius: 10px;
 }
+
+  
+#loading-image {
+  width: 100%;
+  height: 100%;
+}
+
+#stock-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 500px;
+    height: 500px;
+    margin-top: -250px; /* Half the height */
+    margin-left: -250px; /* Half the width */
+ }
