@@ -16,7 +16,7 @@ import numpy as np
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 tf.random.set_seed(1)
-numpy.random.seed(7)
+np.random.seed(7)
 
 
 @predictor.app.route('/stock', methods=['GET'])
@@ -61,42 +61,41 @@ def get_graph(stock):
     close_data = []
     for price in df.close: 
         close_data.append(price)
+    actual = close_data[211:]
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    close_data = scaler.fit_transform(np.array(close_data).reshape(-1,1))
+
     x_train, y_train = train_data(10, close_data[:200])
     x_test, y_test = test_data(10, close_data[200:])
-    actual = y_test
     
-    x_train = x_train.reshape(189, 10, 1) / 200
-    y_train = y_train / 200
-
-    x_test = x_test.reshape(len(df.close) - 211, 10, 1) / 200
-    y_test = y_test / 200
+    x_train = x_train.reshape(189, 10, 1) 
+    x_test = x_test.reshape(len(df.close) - 211, 10, 1)
 
     # Create LSTM model using Keras
     model = tf.keras.Sequential()
     model.add(tf.keras.layers.LSTM(20, input_shape=(10, 1), return_sequences=True))
     model.add(tf.keras.layers.LSTM(20))
-    model.add(tf.keras.layers.Dense(1, activation=tf.nn.relu))
+    model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
     
     model.compile(optimizer="adam", loss="mean_squared_error")
 
     # Fit model to training data and predict on the test data
     model.fit(x_train, y_train, epochs=50, batch_size=10)
-    print (model.get_weights())
     
     predictions = []
     for prediction in model.predict(x_test, batch_size=10):
-        predictions.append(prediction[0] * 200)
-        print(prediction, file=sys.stderr)
+        predictions.append(prediction[0])
+    predictions = scaler.inverse_transform(np.array(predictions).reshape(-1,1))
     start_index = len(df.index) - len(predictions)
     modified_index = df.index[start_index:]
 
-    # Generate Plot
+    # Generate Plot of last 30 days with predictions
     fig, ax = plt.subplots()
     ax.set_title("Price Predictions for " + stock + " Stock")
     ax.set_xlabel("Date")
     ax.set_ylabel("Closing Price")
-    ax.plot(modified_index, actual, color="blue", label="Actual Stock Prices")
-    ax.plot(modified_index, predictions, color="green", label="Predicted Stock Prices")    
+    ax.plot(modified_index[-30:], actual[-30:], color="blue", label="Actual Stock Prices")
+    ax.plot(modified_index[-30:], predictions[-30:], color="green", label="Predicted Stock Prices")    
     plt.legend(loc="upper left")
     
     # Find at most 5 ticks on the y-axis at 'nice' locations
