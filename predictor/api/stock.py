@@ -14,6 +14,9 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import numpy as np 
 import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
+tf.random.set_seed(1)
+numpy.random.seed(7)
 
 
 @predictor.app.route('/stock', methods=['GET'])
@@ -62,14 +65,10 @@ def get_graph(stock):
     x_test, y_test = test_data(10, close_data[200:])
     actual = y_test
     
-    print (x_train.shape, file=sys.stderr)
-    print (x_test.shape, file=sys.stderr)
     x_train = x_train.reshape(189, 10, 1) / 200
     y_train = y_train / 200
 
-    print (x_train, file=sys.stderr)
-    print (y_train, file=sys.stderr)
-    x_test = x_test.reshape(42, 10, 1) / 200
+    x_test = x_test.reshape(len(df.close) - 211, 10, 1) / 200
     y_test = y_test / 200
 
     # Create LSTM model using Keras
@@ -77,15 +76,17 @@ def get_graph(stock):
     model.add(tf.keras.layers.LSTM(20, input_shape=(10, 1), return_sequences=True))
     model.add(tf.keras.layers.LSTM(20))
     model.add(tf.keras.layers.Dense(1, activation=tf.nn.relu))
-
+    
     model.compile(optimizer="adam", loss="mean_squared_error")
 
     # Fit model to training data and predict on the test data
-    model.fit(x_train, y_train, epochs=50)
+    model.fit(x_train, y_train, epochs=50, batch_size=10)
+    print (model.get_weights())
     
     predictions = []
-    for prediction in model.predict(x_test):
+    for prediction in model.predict(x_test, batch_size=10):
         predictions.append(prediction[0] * 200)
+        print(prediction, file=sys.stderr)
     start_index = len(df.index) - len(predictions)
     modified_index = df.index[start_index:]
 
