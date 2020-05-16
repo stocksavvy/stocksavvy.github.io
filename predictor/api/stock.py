@@ -54,13 +54,49 @@ def get_graph(stock):
     # Use Pandas DataReader to read in historical stock data
     df = web.DataReader(stock, "av-daily", start, end, api_key=alphavantage_key)
 
+    # Preprocess Data 
+    close_data = []
+    for price in df.close: 
+        close_data.append(price)
+    x_train, y_train = train_data(10, close_data[:200])
+    x_test, y_test = test_data(10, close_data[200:])
+    actual = y_test
+    
+    print (x_train.shape, file=sys.stderr)
+    print (x_test.shape, file=sys.stderr)
+    x_train = x_train.reshape(189, 10, 1) / 200
+    y_train = y_train / 200
+
+    print (x_train, file=sys.stderr)
+    print (y_train, file=sys.stderr)
+    x_test = x_test.reshape(42, 10, 1) / 200
+    y_test = y_test / 200
+
+    # Create LSTM model using Keras
+    model = tf.keras.Sequential()
+    model.add(tf.keras.layers.LSTM(20, input_shape=(10, 1), return_sequences=True))
+    model.add(tf.keras.layers.LSTM(20))
+    model.add(tf.keras.layers.Dense(1, activation=tf.nn.relu))
+
+    model.compile(optimizer="adam", loss="mean_squared_error")
+
+    # Fit model to training data and predict on the test data
+    model.fit(x_train, y_train, epochs=50)
+    
+    predictions = []
+    for prediction in model.predict(x_test):
+        predictions.append(prediction[0] * 200)
+    start_index = len(df.index) - len(predictions)
+    modified_index = df.index[start_index:]
+
     # Generate Plot
     fig, ax = plt.subplots()
     ax.set_title("Price Predictions for " + stock + " Stock")
     ax.set_xlabel("Date")
     ax.set_ylabel("Closing Price")
-    ax.plot(df.index, df.close)
-    
+    ax.plot(modified_index, actual, color="blue", label="Actual Stock Prices")
+    ax.plot(modified_index, predictions, color="green", label="Predicted Stock Prices")    
+    plt.legend(loc="upper left")
     
     # Find at most 5 ticks on the y-axis at 'nice' locations
     max_xticks = 5
@@ -76,8 +112,8 @@ def train_data(train_size, data):
     x_train = []
     y_train = []
     for i in range(len(data) - train_size - 1):
-        x_train.append(np.array(data.iloc[i: i + train_size, 1]))
-        y_train.append(np.array(data.iloc[i + train_size + 1, 1], np.float64))
+        x_train.append(np.array(data[i: i + train_size]))
+        y_train.append(np.array(data[i + train_size], np.float64))
     x_train = np.array(x_train)
     y_train = np.array(y_train)
     return x_train, y_train
@@ -86,8 +122,8 @@ def test_data(test_size, data):
     x_test = []
     y_test = []
     for i in range(len(data) - test_size - 1):
-        x_test.append(np.array(data.iloc[i: i + test_size, 1]))
-        y_test.append(np.array(data.iloc[i + test_size + 1, 1], np.float64))
+        x_test.append(np.array(data[i: i + test_size]))
+        y_test.append(np.array(data[i + test_size], np.float64))
     x_test = np.array(x_test)
     y_test = np.array(y_test)
     return x_test, y_test
